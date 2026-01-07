@@ -2,9 +2,8 @@ name: Build
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    tags:
+      - 'v*'
 
 jobs:
   build:
@@ -33,11 +32,8 @@ jobs:
         path: bin/Release/update.exe
 
     - name: Create Release
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: build-${{ github.run_number }}
-        name: Build ${{ github.run_number }}
         files: bin/Release/update.exe
         generate_release_notes: true
       env:
