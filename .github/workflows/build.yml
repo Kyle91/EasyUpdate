@@ -24,10 +24,21 @@ jobs:
       run: nuget restore EasyUpdate.csproj
 
     - name: Build
-      run: msbuild EasyUpdate.csproj /p:Configuration=Release
+      run: msbuild EasyUpdate.csproj /p:Configuration=Release /p:DebugType=none
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: EasyUpdate-Release
-        path: bin/Release/
+        path: bin/Release/update.exe
+
+    - name: Create Release
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: build-${{ github.run_number }}
+        name: Build ${{ github.run_number }}
+        files: bin/Release/update.exe
+        generate_release_notes: true
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
